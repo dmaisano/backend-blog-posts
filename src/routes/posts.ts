@@ -1,12 +1,13 @@
 import { Request, Response, Router } from "express";
 import { SortBy, SortDirection } from "../constants";
+import postsService from "../services/posts.service";
 import { SortByType, SortDirectionType } from "../types";
 
 const router = Router();
 
 router.get(
   `/`,
-  (
+  async (
     req: Request<
       {},
       {},
@@ -43,7 +44,9 @@ router.get(
 
     console.log({ tags, sortBy, direction, parsedTags });
 
-    return res.json([]);
+    const posts = await postsService.fetchPosts(parsedTags, sortBy, direction);
+
+    return res.json(posts);
   },
 );
 

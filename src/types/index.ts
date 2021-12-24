@@ -4,3 +4,12 @@ import { SortBy, SortDirection } from "../constants";
 export type SortByType = typeof SortBy[number];
 
 export type SortDirectionType = typeof SortDirection[number];
+
+export interface IPost {
+  author: string;
+  authorId: number;
+  likes: number;
+  popularity: number;
+  reads: number;
+  tags: string[];
+}
