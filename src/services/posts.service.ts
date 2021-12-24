@@ -1,5 +1,6 @@
 import axios from "axios";
 import { IPost, SortByType, SortDirectionType } from "../types";
+import moment from "moment";
 
 class PostsService {
   // this will serve as a simple in-memory cache
@@ -29,9 +30,21 @@ class PostsService {
     for (const tag of tags) {
       const cachedPost = this.cachedPosts[tag];
       if (cachedPost) {
-        console.log(`Found cached posts for tag ${tag}`);
-        clientRes.posts.push(...cachedPost.posts);
-        continue;
+        const now = moment();
+
+        // for the purpose of this demo, we will consider 30sec to our expiration time for what we will consider to be "stale data"
+        const expTime = 1000 * 30;
+
+        const isStale =
+          now.diff(moment(cachedPost.timestamp), `milliseconds`) >= expTime;
+
+        console.log({ isStale });
+
+        if (!isStale) {
+          // data is not stale yet, we can continue to use
+          clientRes.posts.push(...cachedPost.posts);
+          continue;
+        }
       }
 
       const response = axios.get<{ posts: IPost[] }>(
